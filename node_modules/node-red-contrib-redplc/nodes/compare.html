@@ -1,0 +1,335 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<script type="text/javascript">
+    RED.nodes.registerType('compare', {
+        category: 'redPlc',
+        color: 'GOLD',
+        paletteLabel: 'compare',
+        defaults: {
+            operation: { value: "ge", required: true },
+            operand1: { value: "IA", required: true },
+            address1: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            index1: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 15); } },
+            operand2: { value: "nconst", required: true },
+            address2: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            index2: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 15); } },
+            const2: { value: 0, required: true, validate: function (v) { return !isNaN(Number(v)); } },
+            td2: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 48); } },
+            th2: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 23); } },
+            tm2: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            ts2: { value: 1, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            tms2: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 99); } },
+            operandl: { value: "nconst", required: true },
+            addressl: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            tdl: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 48); } },
+            thl: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 23); } },
+            tml: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            tsl: { value: 1, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            tmsl: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 99); } },
+            constl: { value: 0, required: true, validate: function (v) { return !isNaN(Number(v)); } },
+            operandh: { value: "nconst", required: true },
+            addressh: { value: 1, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            consth: { value: 10, required: true, validate: function (v) { return !isNaN(Number(v)); } },
+            tdh: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 48); } },
+            thh: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 23); } },
+            tmh: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            tsh: { value: 2, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            tmsh: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 99); } },
+            name: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: function () {
+            switch (this.operation) {
+                case "eq":  return "contact-cmp-eq.png";
+                case "ne":  return "contact-cmp-ne.png";
+                case "lt":  return "contact-cmp-lt.png";
+                case "gt":  return "contact-cmp-gt.png";
+                case "le":  return "contact-cmp-le.png";
+                default:
+                case "ge":  return "contact-cmp-ge.png";
+                case "hysHL": return "contact-lim-hy1.png";
+                case "hysLH": return "contact-lim-hy2.png";
+                case "inlimit": return "contact-lim-il.png";
+                case "outlimit": return "contact-lim-ol.png";
+            }
+        },
+        inputLabels: "IN: boolean",
+        outputLabels: ["OUT: boolean"],
+        label: function () {
+            var op1 = this.operand1 + this.address1;
+            var op2 = this.operand2 + this.address2;
+
+            switch (this.operand1) {
+                case "IA":
+                case "QA":
+                    op1 += "[" + this.index1 + "]";
+            }
+
+            switch (this.operation) {
+                case "hysHL":
+                case "hysLH":
+                case "inlimit":
+                case "outlimit":
+                    return this.operation + "(" + op1 + ")";
+            }
+
+            switch (this.operand2) {
+                case "nconst": 
+                    op2 = this.const2;
+                    break;
+                case "tconst": 
+                    op2 = "";
+                    if (this.td2 > 0) op2 += this.td2 + "d";
+                    if (this.th2 > 0) op2 += this.th2 + "h";
+                    if (this.tm2 > 0) op2 += this.tm2 + "m";
+                    if (this.ts2 > 0) op2 += this.ts2 + "s";
+                    if (this.tms2 > 0) op2 += (this.tms2 * 10) + "ms";
+                    if (op2 === "") op2 = "0ms";
+                case "IA":
+                case "QA":
+                    op2 += "[" + this.index2 + "]";
+                    break;
+            }
+
+            switch (this.operation) {
+                case "eq": return op1 + " == " + op2;
+                case "ne": return op1 + " <> " + op2;
+                case "lt": return op1 + " < " + op2;
+                case "gt": return op1 + " > " + op2;
+                case "le": return op1 + " <= " + op2;
+                case "ge": return op1 + " >= " + op2;
+            }
+        },
+        oneditprepare: function () {
+            function init_operation(operation) {
+                $("#div-operand2").hide();
+                $("#div-limit").hide();
+
+                switch (operation) {
+                    case "hysHL":
+                    case "hysLH":
+                    case "inlimit":
+                    case "outlimit":
+                        $("#div-limit").show();
+                        break;
+                    default:
+                        $("#div-operand2").show();
+                }
+            }
+
+            function init_operand1(operand) {
+                $("#open-index1").hide();
+                $("#close-index1").hide();
+                $("#node-input-index1").hide();
+
+                switch (operand) {
+                    case "IA":
+                    case "QA":
+                        $("#open-index1").show();
+                        $("#close-index1").show();
+                        $("#node-input-index1").show();
+                }
+            }
+
+            function init_operand2(operand) {
+                $("#node-input-const2").hide();
+                $("#div-tconst2").hide();
+                $("#node-input-address2").hide();
+                $("#open-index2").hide();
+                $("#close-index2").hide();
+                $("#node-input-index2").hide();
+
+                switch (operand) {
+                    case "nconst":
+                        $("#node-input-const2").show();
+                        break;
+                    case "tconst":
+                        $("#div-tconst2").show();
+                        break;
+                    case "IA":
+                    case "QA":
+                        $("#node-input-address2").show();
+                        $("#open-index2").show();
+                        $("#close-index2").show();
+                        $("#node-input-index2").show();
+                        break;
+                    default:
+                        $("#node-input-address2").show();
+                }
+            }
+
+            function init_operandl(operand) {
+                $("#node-input-constl").hide();
+                $("#node-input-addressl").hide();
+                $("#div-tconstl").hide();
+
+                switch (operand) {
+                    case "nconst":
+                        $("#node-input-constl").show();
+                        break;
+                    case "tconst":
+                        $("#div-tconstl").show();
+                        break;
+                    default:
+                        $("#node-input-addressl").show();
+                }
+            }
+
+            function init_operandh(operand) {
+                $("#node-input-consth").hide();
+                $("#node-input-addressh").hide();
+                $("#div-tconsth").hide();
+
+                switch (operand) {
+                    case "nconst":
+                        $("#node-input-consth").show();
+                        break;
+                    case "tconst":
+                        $("#div-tconsth").show();
+                        break;
+                    default:
+                        $("#node-input-addressh").show();
+                }
+            }
+
+            $("#node-input-operation").on("change", function () { init_operation(this.value); }).change();
+            $("#node-input-operand1").on("change", function () { init_operand1(this.value); }).change();
+            $("#node-input-operand2").on("change", function () { init_operand2(this.value); }).change();
+            $("#node-input-operandl").on("change", function () { init_operandl(this.value); }).change();
+            $("#node-input-operandh").on("change", function () { init_operandh(this.value); }).change();
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="compare">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">Ladder Logic Compare</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-operation"><i class="fa fa-bars"></i> Operation</label>
+        <select type="text" id="node-input-operation" style="width: auto;">
+            <option value="eq">==</option>
+            <option value="ne">&lt;&gt;</option>
+            <option value="lt">&lt;</option>
+            <option value="gt">&gt;</option>
+            <option value="le">&lt;=</option>
+            <option value="ge">&gt;=</option>
+            <option value="hysHL">hysteresis HL</option>
+            <option value="hysLH">hysteresis LH</option>
+            <option value="inlimit">in limit</option>
+            <option value="outlimit">out limit</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-operand1"><i class="fa fa-sign-out"></i> Input</label>
+        <select type="text" id="node-input-operand1" style="width: auto;">
+            <option value="IA">IA</option>
+            <option value="QA">QA</option>
+        	<option value="MA">MA</option>
+        	<option value="C">C</option>
+        	<option value="T">T</option>
+        </select>
+        <input id="node-input-address1" placeholder="Address 1" value=0 input type="number" min="0" max="999" required style="width: auto;">
+        <label id="open-index1" style="width: auto;"><b>[</b></label>
+        <input id="node-input-index1" placeholder="index 1" value=0 input type="number" min="0" max="15" required style="width: auto;">
+        <label id="close-index1" style="width: auto;"><b>]</b></label>
+    </div>
+    <div id="div-operand2" class="form-row">
+        <div class="form-row">
+            <label for="node-input-operand2"><i class="fa fa-sign-out"></i> Compare</label>
+            <select type="text" id="node-input-operand2" style="width: auto;">
+                <option value="nconst">#N</option>
+                <option value="tconst">#T</option>
+                <option value="IA">IA</option>
+                <option value="QA">QA</option>
+                <option value="MA">MA</option>
+                <option value="C">C</option>
+                <option value="T">T</option>
+            </select>
+            <input id="node-input-address2" placeholder="Address 2" value=0 input type="number" min="0" max="999" required style="width: auto;">
+            <label id="open-index2" style="width: auto;"><b>[</b></label>
+            <input id="node-input-index2" placeholder="index 2" value=0 input type="number" min="0" max="15" required style="width: auto;">
+            <label id="close-index2" style="width: auto;"><b>]</b></label>
+            <input id="node-input-const2" placeholder="Number Const" input type="text" required style="width: auto;">
+        </div>
+        <div id="div-tconst2" class="form-row">
+            <label style="width: auto;"><i class="fa fa-clock-o"></i></label>
+            <input id="node-input-td2" placeholder="day" value=0 input type="number" min="0" max="48" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>d</b></label>
+            <input id="node-input-th2" placeholder="hour" value=0 input type="number" min="0" max="23" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>h</b></label>
+            <input id="node-input-tm2" placeholder="min" value=0 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>m</b></label>
+            <input id="node-input-ts2" placeholder="sec" value=1 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>s</b></label>
+            <input id="node-input-tms2" placeholder="msec" value=0 input type="number" min="0" max="99" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>0ms</b></label>
+        </div>
+    </div>
+    <div id="div-limit" class="form-row">
+        <div class="form-row">
+            <label for="node-input-operandl"><i class="fa fa-level-down"></i> Limit-L</label>
+            <select type="text" id="node-input-operandl" style="width: auto;">
+                <option value="nconst">#N</option>
+                <option value="tconst">#T</option>
+                <option value="MA">MA</option>
+            </select>
+            <input id="node-input-addressl" placeholder="Address L" value=0 input type="number" min="0" max="999" required style="width: auto;">
+            <input id="node-input-constl" placeholder="Number Const" input type="text" required style="width: auto;">
+        </div>
+        <div id="div-tconstl" class="form-row">
+            <label style="width: auto;"><i class="fa fa-clock-o"></i></label>
+            <input id="node-input-tdl" placeholder="day" value=0 input type="number" min="0" max="48" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>d</b></label>
+            <input id="node-input-thl" placeholder="hour" value=0 input type="number" min="0" max="23" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>h</b></label>
+            <input id="node-input-tml" placeholder="min" value=0 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>m</b></label>
+            <input id="node-input-tsl" placeholder="sec" value=1 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>s</b></label>
+            <input id="node-input-tmsl" placeholder="msec" value=0 input type="number" min="0" max="99" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>0ms</b></label>
+        </div>
+        <div class="form-row">
+            <label for="node-input-operandh"><i class="fa fa-level-up"></i> Limit-H</label>
+            <select type="text" id="node-input-operandh" style="width: auto;">
+                <option value="nconst">#N</option>
+                <option value="tconst">#T</option>
+                <option value="MA">MA</option>
+            </select>
+            <input id="node-input-addressh" placeholder="Address H" value=0 input type="number" min="0" max="999" required style="width: auto;">
+            <input id="node-input-consth" placeholder="Number Const" input type="text" required style="width: auto;">
+        </div>
+        <div id="div-tconsth" class="form-row">
+            <label style="width: auto;"><i class="fa fa-clock-o"></i></label>
+            <input id="node-input-tdh" placeholder="day" value=0 input type="number" min="0" max="48" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>d</b></label>
+            <input id="node-input-thh" placeholder="hour" value=0 input type="number" min="0" max="23" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>h</b></label>
+            <input id="node-input-tmh" placeholder="min" value=0 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>m</b></label>
+            <input id="node-input-tsh" placeholder="sec" value=2 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>s</b></label>
+            <input id="node-input-tmsh" placeholder="msec" value=0 input type="number" min="0" max="99" required style="width: auto; text-align:right;">
+            <label style="width: auto;"><b>0ms</b></label>
+        </div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width: auto;">
+    </div>
+</script>

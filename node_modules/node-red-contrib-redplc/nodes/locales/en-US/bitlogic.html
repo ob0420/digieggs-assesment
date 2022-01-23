@@ -1,0 +1,176 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/html" data-help-name="contact">
+    <p>Ladder Logic Contact.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>IN: payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>OUT: payload <span class="property-type">boolean</span></dt>
+        <dt><b>As input</b> if contact closed.</span></dt>
+        <dt><b>False</b> if contact open.</span></dt>
+    </dl>
+    <h3><b>Variable:</b></h3>
+        <dl class="message-properties">
+            <dt><b>I </b><i>adr.bit</i> Digital Input<span class="property-type">boolean</span></dt>
+            <dt><b>Q </b><i>adr.bit</i> Digital Output<span class="property-type">boolean</span></dt>
+            <dt><b>M </b><i>adr.bit</i> Digital Memory<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.QU</i> Counter >= Preset<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.QD</i> Counter <= 0<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.R</i> Counter Reset<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.LD</i> Counter Load<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.CU</i> Count Up<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.CD</i> Count Down<span class="property-type">boolean</span></dt>
+            <dt><b>T </b><i>adr.Q</i> Timer Output<span class="property-type">boolean</span></dt>
+            <dt><b>T </b><i>adr.R</i> Timer Reset<span class="property-type">boolean</span></dt>
+            <dt><b>T </b><i>adr.TT</i> Timer Timed<span class="property-type">boolean</span></dt>
+            <dt><b>T </b><i>adr.IN</i> Timer Input<span class="property-type">boolean</span></dt>
+            <dt><b>FF </b><i>adr.R</i> Flip Flop Reset<span class="property-type">boolean</span></dt>
+            <dt><b>FF </b><i>adr.S</i> Flip Flop Set<span class="property-type">boolean</span></dt>
+            <dt><b>FF </b><i>adr.Q</i> Flip Flop Output<span class="property-type">boolean</span></dt>
+        </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        This node implements ladder logic contact.<br><br>
+        <b>Operation:</b><br>
+        <ul>
+            <li><b>Normal open:</b><br>
+                Contact closed on bit true.</li>
+            <li><b>Normal close:</b><br>
+                Contact closed on bit false.</li>
+            <li><b>Pos. Edge:</b><br>
+                Contact closed on bit rising edge.</li>
+            <li><b>Neg. Edge:</b><br>
+                Contact closed on bit falling edge.</li>
+        </ul>
+	</p>
+</script>
+
+<script type="text/html" data-help-name="coil">
+    <p>Ladder Logic Coil.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>IN: payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>OUT: payload <span class="property-type">boolean</span></dt>
+        <dt><b>As input</b></span></dt>
+    </dl>
+    <h3><b>Variable:</b></h3>
+        <dl class="message-properties">
+            <dt><b>Q </b><i>adr.bit</i> Digital Output<span class="property-type">boolean</span></dt>
+            <dt><b>M </b><i>adr.bit</i> Digital Memory<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.R</i> Reset Counter<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.LD</i> Load Preset<span class="property-type">boolean</span></dt>
+            <dt><b>C </b><i>adr.CD</i> Count Down<span class="property-type">boolean</span></dt>
+            <dt><b>T </b><i>adr.R</i> Reset Timer<span class="property-type">boolean</span></dt>
+            <dt><b>FF </b><i>adr.R</i> Reset Flip Flop<span class="property-type">boolean</span></dt>
+            <dt><b>FF </b><i>adr.S</i> Set Flip Flop<span class="property-type">boolean</span></dt>
+        </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        This node implements ladder logic coil.<br>
+        Memory (M) are created if not exist.<br><br>
+        <b>Operation:</b><br>
+        <ul>
+            <li><b>Store:</b><br>
+                Coil is set/reset.</li>
+            <li><b>Store Invert:</b><br>
+                Coil is set/reset inverted.</li>
+            <li><b>Reset:</b><br>
+                Coil is reset on input true.</li>
+            <li><b>Set:</b><br>
+                Coil is set on input true.</li>
+            <li><b>Pos. Edge:</b><br>
+                Coil is set on input rising edge.</li>
+            <li><b>Neg. Edge:</b><br>
+                Coil is set on input falling edge.</li>
+        </ul>
+	</p>
+</script>
+
+<script type="text/html" data-help-name="digital-function">
+    <p>Ladder Logic Digital Function.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>IN: payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>OUT: payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <p>
+        This node implements ladder logic<br>
+        digital functions.<br>
+        OR, AND, XOR operation needs min.<br>
+        2 nodes wired on input for valid work.<br><br>
+        <b>Operations:</b><br>
+        <ul>
+            <li><b>NOT</b> Invert operation.</li>
+            <li><b>NOP</b> No operation.</li>
+            <li><b>OR</b> Logical OR inputs.</li>
+            <li><b>AND</b> Logical AND inputs.</li>
+            <li><b>XOR</b> Logical XOR inputs.</li>
+            <li><b>P_TRIGGER:</b> Check for rising edge.</li>
+            <li><b>N_TRIGGER:</b> Check for falling edge.</li>
+        </ul>
+	</p>
+</script>
+
+<script type="text/html" data-help-name="flipflop">
+    <p>Ladder Logic Flip-Flop.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>R1: payload Reset<span class="property-type">boolean</span></dt>
+        <dt>S1: payload Set<span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>Q: payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Variable:</b></h3>
+        <dl class="message-properties">
+            <dt><b>FF </b><i>adr.ffs</i> Flip-Flop State<span class="property-type">boolean</span></dt>
+        </dl>
+    <p>
+        This node implements ladder logic Flip-Flop.<br>
+        Input is dominant.<br>
+        <b>RS:</b> Input payload true resets output.<br> 
+        For set output use S control with coil.<br>
+        <b>SR:</b> Input payload true sets output.<br>
+        For reset output use R control with coil.<br><br>
+        <b>Operations:</b><br>
+        <ul>
+            <li><b>RS</b> Reset dominant.</li>
+            <li><b>SR</b> Set dominant.</li>
+        </ul>
+        <b>Flip-Flop Flags:</b><br>
+        <ul>
+            <li><b>R</b> Reset Input.</li>
+            <li><b>S</b> Set Input.</li>
+            <li><b>Q</b> Output.</li>
+        </ul>
+        <b>Flip-Flop Control:</b><br>
+        <ul>
+            <li><b>R</b> Reset Flip-Flop.</li>
+            <li><b>S</b> Set Flip-Flop.</li>
+        </ul>
+	</p>
+</script>

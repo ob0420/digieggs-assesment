@@ -1,0 +1,125 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/javascript">
+    RED.nodes.registerType('redplc-cpu', {
+        category: 'redPlc',
+        color: 'ORANGERED',
+        paletteLabel: 'cpu',
+        defaults: {
+            sdelay:  { value: 200, required: true,  validate: function(v) { return RED.validators.number(v) && (v >= 5) && (v <= 10000); }},
+            tinput:  { value: 30,  required: true,  validate: function(v) { return RED.validators.number(v) && (v >= 1) && (v <= 10000); } },
+            toutput: { value: 30,  required: true,  validate: function(v) { return RED.validators.number(v) && (v >= 1) && (v <= 10000); }},
+            trungs:  { value: 5,  required: true,  validate: function(v) { return RED.validators.number(v) && (v >= 1) && (v <= 10000); }},
+            outputs: { value: 2,   required: true,  validate: function(v) { return RED.validators.number(v) && (v >= 2) && (v <= 31); }},
+            stime :  { value: false },
+        },
+        inputs: 1,
+        outputs: 2,
+		outputLabels: function(i) {
+            if (i === 0)
+                return "modules: string";
+            else
+                return "rung-" + i + ": boolean";
+        },
+        icon: "cpu.png",
+        label: "cpu"
+    });
+</script>
+
+<script type="text/html" data-template-name="redplc-cpu">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">redPlc CPU Engine</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-sdelay"><i class="fa fa-clock-o"></i> t-Start</label>
+        <input id="node-input-sdelay" placeholder="Start Delay (ms)" input type="number" min="5" max="10000" required style="width: auto;">
+        <label for="node-input-sdelay"> ms</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-tinput"><i class="fa fa-refresh"></i> t-Inputs</label>
+        <input id="node-input-tinput" placeholder="Input Delay (ms)" input type="number" min="1" max="10000" required style="width: auto;">
+        <label for="node-input-tinput"> ms</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-toutput"><i class="fa fa-refresh"></i> t-Outputs</label>
+        <input id="node-input-toutput" placeholder="Output Delay (ms)" input type="number" min="1" max="10000" required style="width: auto;">
+        <label for="node-input-toutput"> ms</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-trungs"><i class="fa fa-refresh"></i> t-Rungs</label>
+        <input id="node-input-trungs" placeholder="Rung Delay (ms)" input type="number" min="1" max="10000" required style="width: auto;">
+        <label for="node-input-trungs"> ms</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputs"><i class="fa fa-tasks"></i> Outputs</label>
+        <input id="node-input-outputs" input type="number" min="2" max="31" required style="width: auto;">
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-stime" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-stime" style="width: 70%;"> Display Cycle Time</label>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('sys-start', {
+        category: 'redPlc',
+        color: 'SILVER',
+        paletteLabel: 'sys start',
+        defaults: {
+        },
+        inputs: 1,
+        outputs: 1,
+        inputLabels: "in: boolean",
+        outputLabels: ["out: boolean"],
+        icon: "sys-start.png",
+        label: "sys start",
+    });
+</script>
+
+<script type="text/html" data-template-name="sys-start">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">redPlc System Start</label>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('rung-start', {
+        category: 'redPlc',
+        color: 'SILVER',
+        paletteLabel: 'rung start',
+        defaults: {
+            comment: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        inputLabels: "in: boolean",
+        outputLabels: ["out: boolean"],
+        icon: "rung-start.png",
+        label: "rung start",
+    });
+</script>
+
+<script type="text/html" data-template-name="rung-start">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">redPlc Rung Start</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-comment"><i class="fa fa-commenting-o"></i> Comment</label>
+        <input type="text" id="node-input-comment" placeholder="Comment" style="width: auto;">
+    </div>
+</script>

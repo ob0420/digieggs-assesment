@@ -1,0 +1,72 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/html" data-help-name="timer">
+    <p>Ladder Logic Timer.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>IN: payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>Q: payload<span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Variable:</b></h3>
+        <dl class="message-properties">
+            <dt></b>T</b> <i>adr.pt</i> Timer Preset<span class="property-type">number</span></dt>
+            <dt></b>T</b> <i>adr.et</i> Timer Value<span class="property-type">number</span></dt>
+            <dt></b>T</b> <i>adr.ts</i> Timer State<span class="property-type">number (bit)</span></dt>
+        </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        This node implements ladder logic timer.<br>
+        Timer preset is read from T[adress].pt<br>
+        variable on timer start.<br>
+        If this 0 or less, node preset is used.<br><br>
+        <b>On Delay (TON):</b><br>
+        Set Q after time period.<br>
+        Rising edge on input starts timer.<br>
+        Input <b>false</b> stops timer.<br>
+        <b>Off Delay (TOF):</b><br>
+        Reset Q after time period.<br>
+        Falling edge on input starts timer.<br>
+        Input <b>true</b> stops timer.<br>
+        <b>Puls (TP):</b><br>
+        Pulse Q for a time period.<br>
+        Rising edge on input starts timer.<br>
+        If timer started, input is ignored.<br>
+        <b>Puls Interval (TPI):</b><br>
+        Pulse Q on interval (blink).<br>
+        Rising edge on input starts interval.<br>
+        Input <b>false</b> stops interval.<br>
+        <b>On Delay Retentive (TONR):</b><br>
+        Set Q after time period.<br>
+        Rising edge on input starts timer.<br>
+        Timer are paused on input false and continue on true.<br>
+        Reset timer with control R coil.<br><br>
+        <b>Timer Flags:</b><br>
+        <ul>
+            <li><b>Q:</b> Timer Output.</li>
+            <li><b>R:</b> Reset Timer.</li>
+            <li><b>TT:</b> Timer Timed.</li>
+            <li><b>IN:</b> Timer Input.</li>
+        </ul>
+        <b>Timer Control:</b><br>
+        <ul>
+            <li><b>R:</b> Reset Timer (TONR).</li>
+        </ul>
+	</p>
+</script>

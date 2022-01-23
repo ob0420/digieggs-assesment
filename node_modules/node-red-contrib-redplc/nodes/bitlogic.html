@@ -1,0 +1,356 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/javascript">
+    RED.nodes.registerType('contact', {
+        category: 'redPlc',
+        paletteLabel: 'contact',
+        color: 'Turquoise',
+        defaults: {
+            operation: { value: "read", required: true },
+            operand:   { value: "I", required: true },
+            address:   { value: 0, required: true, validate: function(v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            bit:       { value: 0, required: true, validate: function(v) { return RED.validators.number(v) && (v >= 0) && (v <= 31); }},
+            counter:   { value: "QU", required: true },
+            timer:     { value: "Q", required: true },
+            flipflop:  { value: "R", required: true },
+            name:      { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+		inputLabels: "IN: boolean",
+		outputLabels: ["OUT: boolean"],
+        icon: function () {
+            switch(this.operation) {
+                default:
+                case "read": return "contact.png";
+                case "not":  return "contact-not.png";
+                case "pos":  return "contact-p.png";
+                case "neg":  return "contact-n.png";
+            }
+        },
+        label: function () {
+            switch(this.operand) {
+                default:
+                    return this.operand + this.address + "." + this.bit;
+                case "C":
+                    return this.operand + this.address + "." + this.counter;
+                case "T":
+                    return this.operand + this.address + "." + this.timer;
+                case "FF":
+                    return this.operand + this.address + "." + this.flipflop;
+            }
+        },
+        oneditprepare: function() {
+            function init_operand(operand) {
+                $("#node-input-bit").hide();
+                $("#node-input-counter").hide();
+                $("#node-input-timer").hide();
+                $("#node-input-flipflop").hide();
+
+                switch(operand) {
+                    default:
+                        $("#node-input-bit").show();
+                        break;
+                    case "C":
+                        $("#node-input-counter").show();
+                        break;
+                    case "T":
+                        $("#node-input-timer").show();
+                        break;
+                    case "FF":
+                        $("#node-input-flipflop").show();
+                        break;
+                }
+            }
+
+            $("#node-input-operand").on("change", function () { init_operand(this.value); }).change();      	
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="contact">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">Ladder Logic Contact</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-operation"><i class="fa fa-bars"></i> Operation</label>
+        <select type="text" id="node-input-operation" style="width: auto;">
+            <option value="read">Normal open</option>
+            <option value="not">Normal close</option>
+            <option value="pos">Positive edge</option>
+            <option value="neg">Negative edge</option>
+        </select>
+	</div>
+    <div class="form-row">
+        <label for="node-input-operand"><i class="fa fa-sign-in"></i> Operand</label>
+        <select type="text" id="node-input-operand" style="width: auto;">
+        	<option value="I">I</option>
+            <option value="Q">Q</option>
+        	<option value="M">M</option>
+        	<option value="C">C</option>
+        	<option value="T">T</option>
+        	<option value="FF">FF</option>
+        </select>
+        <input id="node-input-address" placeholder="Address" value=0 input type="number" min="0" max="999" required style="width: auto;">
+        <label style="width: auto;"><b>.</b></label>
+        <input id="node-input-bit" placeholder="bit" value=0 input type="number" min="0" max="31" required style="width: auto;">
+        <select type="text" id="node-input-counter" style="width: auto;">
+            <option value="QU">QU</option>
+            <option value="QD">QD</option>
+            <option value="R">R</option>
+            <option value="LD">LD</option>
+            <option value="CU">CU</option>
+            <option value="CD">CD</option>
+        </select>
+        <select type="text" id="node-input-timer" style="width: auto;">
+            <option value="Q">Q</option>
+            <option value="R">R</option>
+            <option value="TT">TT</option>
+            <option value="IN">IN</option>
+        </select>
+        <select type="text" id="node-input-flipflop" style="width: auto;">
+            <option value="R">R</option>
+            <option value="S">S</option>
+            <option value="Q">Q</option>
+        </select>
+	</div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width: auto;">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('coil', {
+        category: 'redPlc',
+        paletteLabel: 'coil',
+        color: 'LightSalmon',
+        defaults: {
+            operation: { value: "store", required: true },
+            operand:   { value: "Q", required: true },
+            address:   { value: 0, required: true, validate: function(v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            bit:       { value: 0, required: true, validate: function(v) { return RED.validators.number(v) && (v >= 0) && (v <= 31); } },
+            counter:   { value: "R", required: true },
+            flipflop:  { value: "S", required: true },
+            name:      { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        inputLabels: "IN: boolean",
+        outputLabels: ["OUT: boolean"],
+        icon: function () {
+            switch (this.operation) {
+                default:
+                case "store": return "coil.png";
+                case "not":   return "coil-not.png";
+                case "res":   return "coil-r.png";
+                case "set":   return "coil-s.png";
+                case "pos":   return "coil-p.png";
+                case "neg":   return "coil-n.png";
+            }
+        },
+        align: 'right',
+        label: function () {
+            switch (this.operand) {
+                case "FF": return this.operand + this.address + "." + this.flipflop;
+                case "T":  return this.operand + this.address + ".R";
+                case "C":  return this.operand + this.address + "." + this.counter;
+                default:   return this.operand + this.address + "." + this.bit;
+            }
+        },
+        oneditprepare: function () {
+            function init_operand(operand) {
+                $("#node-input-bit").hide();
+                $("#node-input-counter").hide();
+                $("#node-input-timer").hide();
+                $("#node-input-flipflop").hide();
+                $("#label-reset").hide();
+
+                switch (operand) {
+                    default:
+                        $("#node-input-bit").show();
+                        break;
+                    case "C":
+                        $("#node-input-counter").show();
+                        break;
+                    case "FF":
+                        $("#node-input-flipflop").show();
+                        break;
+                    case "T":
+                        $("#label-reset").show();
+                        break;
+                }
+            }
+
+            $("#node-input-operand").on("change", function () { init_operand(this.value); }).change();
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="coil">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">Ladder Logic Coil</label>
+    </div>
+    <div id="div-operation" class="form-row">
+        <label for="node-input-operation"><i class="fa fa-bars"></i> Operation</label>
+        <select type="text" id="node-input-operation" style="width: auto;">
+        	<option value="store">Store</option>
+        	<option value="not">Store Invert</option>
+            <option value="res">Reset</option>
+            <option value="set">Set</option>
+            <option value="pos">Pos. Edge</option>
+            <option value="neg">Neg. Edge</option>
+        </select>
+	</div>
+    <div class="form-row">
+        <label for="node-input-operand"><i class="fa fa-sign-in"></i> Operand</label>
+        <select type="text" id="node-input-operand" style="width: auto;">
+            <option value="Q">Q</option>
+        	<option value="M">M</option>
+        	<option value="C">C</option>
+        	<option value="T">T</option>
+        	<option value="FF">FF</option>
+        </select>
+        <input id="node-input-address" placeholder="Address" value=0 input type="number" min="0" max="999" required style="width: auto;">
+        <label style="width: auto;"><b>.</b></label>
+        <input id="node-input-bit" placeholder="bit" value=0 input type="number" min="0" max="31" required style="width: auto;">
+        <label id="label-reset" style="width: auto;">R</label>
+        <select type="text" id="node-input-counter" style="width: auto;">
+            <option value="R">R</option>
+            <option value="LD">LD</option>
+            <option value="CD">CD</option>
+        </select>
+        <select type="text" id="node-input-flipflop" style="width: auto;">
+            <option value="R">R</option>
+            <option value="S">S</option>
+        </select>
+	</div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width: auto;">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('digital-function', {
+        category: 'redPlc',
+        color: 'DARKKHAKI',
+        paletteLabel: 'dig. function',
+        defaults: {
+            operation: { value: "not", required: true },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: function () {
+            switch (this.operation) {
+                default:
+                case "not": return "dig-not.png";
+                case "nop": return "dig-nop.png";
+                case "or": return "dig-or.png";
+                case "and": return "dig-and.png";
+                case "xor": return "dig-xor.png";
+                case "pos": return "dig-p.png";
+                case "neg": return "dig-n.png";
+            }
+        },
+        inputLabels: "IN: boolean",
+        outputLabels: ["OUT: boolean"],
+        label: function () {
+            switch (this.operation) {
+                default:
+                case "not": return "NOT";
+                case "nop": return "NOP";
+                case "or":  return "OR";
+                case "and": return "AND";
+                case "xor": return "XOR";
+                case "pos": return "P_TRIGGER";
+                case "neg": return "N_TRIGGER";
+            }
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="digital-function">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">Ladder Logic Digital Function</label>
+    </div>
+    <div id="div-operation" class="form-row">
+        <label for="node-input-operation"><i class="fa fa-bars"></i> Operation</label>
+        <select type="text" id="node-input-operation" style="width: auto;">
+            <option value="not">NOT</option>
+            <option value="nop">NOP</option>
+            <option value="or">OR</option>
+            <option value="and">AND</option>
+            <option value="xor">XOR</option>
+            <option value="pos">P_TRIGGER</option>
+            <option value="neg">N_TRIGGER</option>
+        </select>
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('flipflop', {
+        category: 'redPlc',
+        color: 'RosyBrown',
+        paletteLabel: 'flipflop',
+        defaults: {
+            operation: { value: "rs", required: true },
+            address: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            name: { value: "" },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: function () {
+            switch (this.operation) {
+                default:
+                case "rs": return "flipflop-rs.png";
+                case "sr": return "flipflop-sr.png";
+            }
+        },
+        align: 'left',
+        inputLabels: function() { return this.operation === "rs" ? "R1: boolean" : "S1: boolean"; },
+        outputLabels: ["Q: boolean"],
+        label: function () {
+            switch (this.operation) {
+                default:
+                case "rs": return "RS FF" + this.address;
+                case "sr": return "SR FF" + this.address;
+            }
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="flipflop">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">Ladder Logic Flip-Flop</label>
+    </div>
+    <div id="div-operation" class="form-row">
+        <label for="node-input-operation"><i class="fa fa-bars"></i> Operation</label>
+        <select type="text" id="node-input-operation" style="width: auto;">
+            <option value="rs">RS</option>
+            <option value="sr">SR</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-address"><i class="fa fa-list"></i> Address <b>&nbsp;FF<b></label>
+        <input id="node-input-address" placeholder="Address" value=0 input type="number" min="0" max="999" required style="width: auto;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width: auto;">
+    </div>
+</script>

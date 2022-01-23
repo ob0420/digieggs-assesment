@@ -1,0 +1,87 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/html" data-help-name="redplc-cpu">
+    <p>redPlc CPU Engine.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean</span></dt>
+            <dd><b>False</b> stops CPU</dd>
+            <dd><b>True</b> runs CPU</dd>
+    </dl>
+    <h3><b>Outputs:</b></h3>
+    <dl class="message-properties">
+        <dt>output-1: payload <span class="property-type">string</span></dt>
+            <dd>modules output</dd>
+            <dd>value string <b>"input"</b> or <b>"output"</b></dd>
+        <dt>output-2..n: payload <span class="property-type">boolean</span></dt>
+            <dd>rung-1..rung-n outputs</dd>
+            <dd>value boolean <b>true</b></dd>
+    </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        CPU node performs cyclical sequential order.<br>
+        Module nodes are wired to first output.<br>
+        Ladder logic nodes are wired to second<br>
+        and next outputs (rungs).<br>
+        <h4><b>Properties:</b></h4>
+        <b>t-Start:</b> Wait for start cpu.<br>
+        <b>t-Inputs:</b> Wait after send "input" message.<br>
+        <b>t-Outputs:</b> Wait after send "output" message.<br>
+        <b>t-Rungs:</b> Wait after send rung message.<br>
+        <b>Outputs:</b> Select count of outputs (rungs).<br>
+        <b>Stopwatch:</b> Displays whole cycle time in status.<br>
+        <p class="form-tips">
+        <b>!! Dont wire nodes between rungs. !!</b>
+        </p>
+	</p>
+</script>
+
+<script type="text/html" data-help-name="sys-start">
+    <p>redPlc System Start.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        On system start one <b>true</b> message is send.<br>
+        This can be used for initializing nodes.<br>
+        Wire this node to first rung output.<br>
+    </p>
+</script>
+
+<script type="text/html" data-help-name="rung-start">
+    <p>redPlc Rung Start.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        This node shows a ladder power rail.<br>
+        Status shows rung numer or comment.<br>
+        Wire this node to rung outputs.<br>
+    </p>
+</script>

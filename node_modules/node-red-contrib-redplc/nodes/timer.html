@@ -1,0 +1,95 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/javascript">
+    RED.nodes.registerType('timer', {
+        category: 'redPlc',
+        color: 'YellowGreen',
+        paletteLabel: 'timer',
+        defaults: {
+            operation: { value: "ton", required: true },
+            address: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 999); } },
+            td: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 48); } },
+            th: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 23); } },
+            tm: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            ts: { value: 1, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 59); } },
+            tms: { value: 0, required: true, validate: function (v) { return RED.validators.number(v) && (v >= 0) && (v <= 99); } },
+            name: { value: "" },
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: function () {
+            switch (this.operation) {
+                default:
+                case "ton":  return "timer-ton.png";
+                case "tof":  return "timer-tof.png";
+                case "tp":   return "timer-tp.png";
+                case "tpi":  return "timer-tpi.png";
+                case "tonr": return "timer-tonr.png";
+            }
+        },
+        align: 'left',
+        inputLabels: "IN: boolean",
+        outputLabels: ["Q: boolean"],
+        label: function () {
+            switch (this.operation) {
+                default:
+                case "ton":  return "TON T" + this.address;
+                case "tof":  return "TOF T" + this.address;
+                case "tp":   return "TP T" + this.address;
+                case "tpi":  return "TPI T" + this.address;
+                case "tonr": return "TONR T" + this.address;
+            }
+        },
+    });
+</script>
+
+<script type="text/html" data-template-name="timer">
+    <div class="form-row">
+        <label style="width:100%; border-bottom: 1px solid #eee;">Ladder Logic Timer</label>
+    </div>
+    <div id="div-operation" class="form-row">
+        <label for="node-input-operation"><i class="fa fa-bars"></i> Operation</label>
+        <select type="text" id="node-input-operation" style="width: auto;">
+            <option value="ton">TON On Delay</option>
+            <option value="tof">TOF Off Delay</option>
+            <option value="tp">TP Pulse</option>
+            <option value="tpi">TPI Pulse Interval</option>
+            <option value="tonr">TONR On Delay Retentive</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-address"><i class="fa fa-list"></i> Address <b>&nbsp;T<b></label>
+        <input id="node-input-address" placeholder="Address" value=0 input type="number" min="0" max="999" required style="width: auto;">
+    </div>
+    <div class="form-row">
+        <label for="node-input-td"><i class="fa fa-clock-o"></i> Preset</label>
+        <input id="node-input-td" placeholder="day" value=0 input type="number" min="0" max="48" required style="width: auto; text-align:right;">
+        <label style="width: auto;"><b>d</b></label>
+        <input id="node-input-th" placeholder="hour" value=0 input type="number" min="0" max="23" required style="width: auto; text-align:right;">
+        <label style="width: auto;"><b>h</b></label>
+        <input id="node-input-tm" placeholder="min" value=0 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+        <label style="width: auto;"><b>m</b></label>
+        <input id="node-input-ts" placeholder="sec" value=1 input type="number" min="0" max="59" required style="width: auto; text-align:right;">
+        <label style="width: auto;"><b>s</b></label>
+        <input id="node-input-tms" placeholder="msec" value=0 input type="number" min="0" max="99" required style="width: auto; text-align:right;">
+        <label style="width: auto;"><b>0ms</b></label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width: auto;">
+    </div>
+</script>

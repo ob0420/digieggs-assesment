@@ -1,0 +1,76 @@
+<!--
+  Copyright 2021 Ocean (iot.redplc@gmail.com).
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/html" data-help-name="counter">
+    <p>Ladder Logic Counter.</p>
+    <h3><b>Input:</b></h3>
+    <dl class="message-properties">
+        <dt>CU: payload CTU<span class="property-type">boolean</span></dt>
+        <dt>CD: payload CTD<span class="property-type">boolean</span></dt>
+        <dt>CU: payload CTUD<span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Output:</b></h3>
+    <dl class="message-properties">
+        <dt>QU: payload CTU<span class="property-type">boolean</span></dt>
+        <dt>QD: payload CTD<span class="property-type">boolean</span></dt>
+        <dt>QU: payload CTUD<span class="property-type">boolean</span></dt>
+    </dl>
+    <h3><b>Variable:</b></h3>
+        <dl class="message-properties">
+            <dt><b>C</b> <i>adr.pv</i> Counter Preset<span class="property-type">number</span></dt>
+            <dt><b>C</b> <i>adr.cv</i> Counter Value<span class="property-type">number</span></dt>
+            <dt><b>C</b> <i>adr.cs</i> Counter State<span class="property-type">number</span></dt>
+        </dl>
+    <h3><b>Details:</b></h3>
+    <p>
+        This node implements ladder logic counter.<br>
+        Counts on input rising edge.<br>
+        If Overflow unchecked,<br>
+        counts between 0 and preset boundaries.<br>
+        Counter preset is read from C[adress].pv<br>
+        If this 0 or less, node preset is used.<br><br>
+        <b>Count Up (CTU):</b><br>
+        On startup and reset (R) counter is set to 0.<br>
+        Input counts up by one.<br>
+        Output is true if counter >= preset.<br>
+        <b>Count Down (CTD):</b><br>
+        On startup and load (LD) counter is set to preset.<br>
+        Input counts down by one.<br>
+        Output is true if counter <= 0.<br>
+        <b>Count Up/Down (CTUD):</b><br>
+        On startup and reset (R) counter is set 0.<br>
+        On load (LD), counter is set to preset.<br>
+        Input counts up by one.<br>
+        For count down use CD control with coil.<br>
+        Output is true if counter >= preset or counter <= 0.<br>
+        For check counter use QU or QD contact.<br><br>
+        <b>Counter Flags:</b><br>
+        <ul>
+            <li><b>QU:</b> Counter >= Preset.</li>
+            <li><b>QD:</b> Counter <= 0.</li>
+            <li><b>R:</b> Reset Counter.</li>
+            <li><b>LD:</b> Load Preset Value.</li>
+            <li><b>CD:</b> Count Down Input.</li>
+            <li><b>CU:</b> Count Down Input.</li>
+        </ul>
+        <b>Counter Control:</b><br>
+        <ul>
+            <li><b>R:</b> Reset Counter.</li>
+            <li><b>LD:</b> Load Preset Value.</li>
+            <li><b>CD:</b> Count Down.</li>
+        </ul>
+	</p>
+</script>
