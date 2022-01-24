@@ -18,7 +18,7 @@ const server = new ApolloServer({
 
 server.listen().then(() => {
     console.log(`
-        Server ıs running!
+        Server is running!
         Listening on port 4000
         Explore at kdfskjdsf
         `);

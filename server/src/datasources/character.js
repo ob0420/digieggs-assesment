@@ -11,12 +11,12 @@ class CharacterAPI extends RESTDataSource {
     
     characterReducer(character) {
         return {
-            id: characters.results.id || 0,
+            id: character.id,
             name: character.name,
             location: {
                 name: character.location.name
             },
-            status: character.status,
+            image: character.image,
         };
     }
 
@@ -27,14 +27,14 @@ class CharacterAPI extends RESTDataSource {
             ? response.map(character => this.characterReducer(character))
             : []; */
     }
-    async getCharacterById ({ character }) {
-        const response = await this.get('character', { id: id});
-        return response;
+    async getCharacterById ({ id }) {
+        const data = await this.get(`character/` + 3, { id: id});
+        return data;
     }
 
-    getCharactersByIds({ characterIds }) {
+    async filterCharacters({ id }) {
         return Promise.all(
-            characterIds.map(characterId => this.getCharacterById({ characterId })),
+            characterIds.map(id => this.getCharacterById({ id })),
         );
     }
 

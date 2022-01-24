@@ -1,5 +1,4 @@
-import React, { Fragment, useState }  from 'react';
-import { useQuery, gql } from '@apollo/client'
+import React from 'react';
 import "./CharacterList.css";
 import { useCharacters } from '../hooks/useCharacters';
 

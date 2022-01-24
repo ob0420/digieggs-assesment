@@ -7,7 +7,7 @@ const typeDefs = gql `
     }  
 
     type Character {
-        id: ID!
+        id: ID
         name: String
         location: Location
         status: String
@@ -19,8 +19,15 @@ const typeDefs = gql `
     } 
 
     type Query {
-      characters: Characters
+      characters: Characters!
       character(id: ID!): Character
+    }
+
+    input FilterCharacter{
+      id: ID
+      name: String
+      status: String
+      type: String
     }
 
 `;
